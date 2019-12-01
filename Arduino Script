@@ -1,0 +1,792 @@
+Arduino Script used in the Exhibition, Modified to suit the environment
+//Arduino Code
+/*Arduino Code
+ * Control R\C Servo Motors
+ * —————–
+ *
+ * Controls R\C Servo motor based on the value received
+ * from Processing.Org software
+ *
+ * Code modified by Ajay Varghese
+ *
+ * Code originally created 1 June 2005
+ * copyleft 2005 DojoDave
+ * http://arduino.berlios.de
+ *
+ * based on an orginal by H. Barragan for the Wiring i/o board
+ */
+
+int servoPin13 = 13;    // R\C Servo 3 connected to digital pin 13    ---v
+int servoPin12 = 12;    // R\C Servo 2 connected to digital pin 12      ----> Board 1
+int servoPin11 = 11;    // R\C Servo 1 connected to digital pin 11    ---^
+
+int servoPin10 = 10;    // R\C Servo 3 connected to digital pin 13    ---v
+int servoPin9 = 9;      // R\C Servo 2 connected to digital pin 12      ----> Board 2
+int servoPin8 = 8;      // R\C Servo 1 connected to digital pin 11    ---^
+
+int servoPin7 = 7;      // R\C Servo 3 connected to digital pin 13    ---v
+int servoPin6 = 6;      // R\C Servo 2 connected to digital pin 12      ----> Board 3
+int servoPin5 = 5;      // R\C Servo 1 connected to digital pin 11    ---^
+
+
+int pulse = 0;          // Amount to pulse the servo
+int counter=0;          // To calculate the number of steps it takes
+int destination;        // The angle to which it should rotate to
+long lastPulse = 0;     // The time in milliseconds of the last pulse
+int minPulse = 500;     // Minimum servo position
+int maxPulse = 2500;    // Maximum servo position
+int refreshTime = 20;   // The time in millisecs needed in between pulses
+int val = 0;
+
+//==========================
+// Setup
+//========================== 
+
+void setup()
+{
+  pinMode(servoPin13, OUTPUT);   // Set servo pin as an output pin
+  pinMode(servoPin12, OUTPUT);   // Set servo pin as an output pin
+  pinMode(servoPin11, OUTPUT);   // Set servo pin as an output pin
+
+  pinMode(servoPin10, OUTPUT);   // Set servo pin as an output pin
+  pinMode(servoPin9, OUTPUT);   // Set servo pin as an output pin
+  pinMode(servoPin8, OUTPUT);   // Set servo pin as an output pin
+
+  pinMode(servoPin7, OUTPUT);   // Set servo pin as an output pin
+  pinMode(servoPin6, OUTPUT);   // Set servo pin as an output pin
+  pinMode(servoPin5, OUTPUT);   // Set servo pin as an output pin
+
+
+  pulse = minPulse;              // Set the motor position value to the minimum
+  Serial.begin(9600);            // connect to the serial port
+} 
+
+//=======================
+// Read the Serial
+//======================
+
+void loop() 
+{  
+
+  // read the serial port
+  if(Serial.available())
+  {
+    val = Serial.read();
+  }
+
+  if (destination<1400){
+    pulse=500;
+  }
+  else{
+    pulse=1500;
+  }
+  counter=0;  
+  DTA();      // Control the servo motors from the Serial In
+
+
+}
+
+//==================================================//
+// Control the servo motors from Serial In          //
+//==================================================//
+
+void  DTA()
+{
+
+  // ------------------------------Value "A"------------------------------------------------------
+  if (val == 'A') {
+    (destination=500);            //0'
+    {
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin13, HIGH);   // Turn the motor on
+          digitalWrite(servoPin12, HIGH);   // Turn the motor 12 on 
+          digitalWrite(servoPin11, HIGH);   // Turn the motor 11 on
+          digitalWrite(servoPin10, HIGH);   // Turn the motor on
+          digitalWrite(servoPin9, HIGH);   // Turn the motor 12 on 
+          digitalWrite(servoPin8, HIGH);   // Turn the motor 11 on
+          digitalWrite(servoPin7, HIGH);   // Turn the motor on
+          digitalWrite(servoPin6, HIGH);   // Turn the motor 12 on 
+          digitalWrite(servoPin5, HIGH);   // Turn the motor 11 on
+          delayMicroseconds(pulse);       // Length of the pulse sets the motor position
+          digitalWrite(servoPin13, LOW);    // Turn the motor off
+          digitalWrite(servoPin12, LOW);    // Turn the motor 12 off
+          digitalWrite(servoPin11, LOW);    // Turn the motor 11 off
+          digitalWrite(servoPin10, LOW);    // Turn the motor off
+          digitalWrite(servoPin9, LOW);    // Turn the motor 12 off
+          digitalWrite(servoPin8, LOW);    // Turn the motor 11 off
+          digitalWrite(servoPin7, LOW);    // Turn the motor off
+          digitalWrite(servoPin6, LOW);    // Turn the motor 12 off
+          digitalWrite(servoPin5, LOW);    // Turn the motor 11 off
+          lastPulse = millis();           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+  }
+
+
+  // --------------------------------Value "B"------------------------------------
+  if (val == 'B') {
+    (destination=1500);
+    {
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin13, HIGH);   // Turn the motor on
+          digitalWrite(servoPin5, HIGH);   // Turn the motor on
+          digitalWrite(servoPin10, HIGH);   // Turn the motor on
+          digitalWrite(servoPin9, HIGH);   // Turn the motor on
+          delayMicroseconds(pulse);       // Length of the pulse sets the motor position
+          digitalWrite(servoPin13, LOW);    // Turn the motor off
+          digitalWrite(servoPin5, LOW);    // Turn the motor off
+          digitalWrite(servoPin10, LOW);    // Turn the motor off
+          digitalWrite(servoPin9, LOW);    // Turn the motor off
+          lastPulse = millis();           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1116);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin11, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin11, LOW);                   // Turn the motor off
+          digitalWrite(servoPin8, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+  }
+
+
+  // --------------------------------Value "C"--------------------------------------------
+  if (val == 'C') {
+    (destination=1500);
+    {
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin12, HIGH);   // Turn the motor on
+          digitalWrite(servoPin11, HIGH);   // Turn the motor on
+          digitalWrite(servoPin6, HIGH);   // Turn the motor on
+          digitalWrite(servoPin7, HIGH);   // Turn the motor on
+          digitalWrite(servoPin9, HIGH);   // Turn the motor on
+          digitalWrite(servoPin13, HIGH);   // Turn the motor on
+          delayMicroseconds(pulse);       // Length of the pulse sets the motor position
+          digitalWrite(servoPin12, LOW);    // Turn the motor off
+          digitalWrite(servoPin11, LOW);    // Turn the motor off
+          digitalWrite(servoPin6, LOW);    // Turn the motor off
+          digitalWrite(servoPin7, LOW);    // Turn the motor off
+          digitalWrite(servoPin9, LOW);    // Turn the motor off
+          digitalWrite(servoPin13, LOW);    // Turn the motor off
+          lastPulse = millis();           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=775);
+    {                                                    //50'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);                // Turn the motor on
+          delayMicroseconds(pulse);                      // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);                 // Turn the motor off
+          lastPulse = millis();                          // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+  }
+
+  // --------------------------------------Value "D"-------------------------------------------
+  if (val == 'D') {
+    (destination=1500);
+    {
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);   // Turn the motor on
+          digitalWrite(servoPin10, HIGH);   // Turn the motor on
+          delayMicroseconds(pulse);       // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);    // Turn the motor off
+          digitalWrite(servoPin10, LOW);    // Turn the motor off
+          lastPulse = millis();           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=885);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin13, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin13, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=637.5);
+    {                                                    //25'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin7, HIGH);                // Turn the motor on
+          digitalWrite(servoPin9, HIGH);                // Turn the motor on
+          digitalWrite(servoPin12, HIGH);                // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                // Turn the motor on
+          delayMicroseconds(pulse);                      // Length of the pulse sets the motor position
+          digitalWrite(servoPin7, LOW);                 // Turn the motor off
+          digitalWrite(servoPin9, LOW);                 // Turn the motor off
+          digitalWrite(servoPin12, LOW);                 // Turn the motor off
+          digitalWrite(servoPin8, LOW);                 // Turn the motor off
+          lastPulse = millis();                          // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=582);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin6, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin11, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin6, LOW);                   // Turn the motor off
+          digitalWrite(servoPin11, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }
+
+  // --------------------------------------Value "E"-----------------------------------------------
+  if (val == 'E') {
+    (destination=1500);
+    {
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin13, HIGH);   // Turn the motor 13 on 
+          digitalWrite(servoPin12, HIGH);   // Turn the motor 12 on 
+          digitalWrite(servoPin11, HIGH);   // Turn the motor 11 on
+          delayMicroseconds(pulse);       // Length of the pulse sets the motor position
+          digitalWrite(servoPin13, LOW);    // Turn the motor 13 off
+          digitalWrite(servoPin12, LOW);    // Turn the motor 12 off
+          digitalWrite(servoPin11, LOW);    // Turn the motor 11 off
+          lastPulse = millis();           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=582);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);                   // Turn the motor off
+          digitalWrite(servoPin8, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }
+
+
+  //------------------------------------------ Value "F" ---------------------------------------------
+
+  if (val == 'F') {
+    (destination=637.5);
+    {                                                    //25'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);                // Turn the motor on
+          digitalWrite(servoPin9, HIGH);                // Turn the motor on
+          digitalWrite(servoPin12, HIGH);                // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                // Turn the motor on
+          delayMicroseconds(pulse);                      // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);                 // Turn the motor off
+          digitalWrite(servoPin9, LOW);                 // Turn the motor off
+          digitalWrite(servoPin12, LOW);                 // Turn the motor off
+          digitalWrite(servoPin8, LOW);                 // Turn the motor off
+          lastPulse = millis();                          // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1375);
+    {                                                    //50'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin9, HIGH);                // Turn the motor on
+          delayMicroseconds(pulse);                      // Length of the pulse sets the motor position
+          digitalWrite(servoPin9, LOW);                 // Turn the motor off
+          lastPulse = millis();                          // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=512);
+    {                                                     //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin7, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin7, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }
+
+
+  //------------------------------------------ Value "G" ---------------------------------------------
+
+  if (val == 'G') {
+    (destination=885);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin13, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin13, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1116);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin11, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin7, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin11, LOW);                   // Turn the motor off
+          digitalWrite(servoPin7, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=582);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin6, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin6, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }  
+
+  //------------------------------------------ Value "H" ---------------------------------------------
+
+  if (val == 'H') {
+    (destination=1485);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin11, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin11, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=600);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin13, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);                   // Turn the motor off
+          digitalWrite(servoPin13, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=980);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin9, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin9, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }  
+
+  //------------------------------------------ Value "I" ---------------------------------------------
+
+  if (val == 'I') {
+    (destination=1085);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin10, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin10, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1315);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin12, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin7, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin12, LOW);                   // Turn the motor off
+          digitalWrite(servoPin7, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=682);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin9, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin5, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin9, LOW);                   // Turn the motor off
+          digitalWrite(servoPin5, LOW);                   // Turn the motor off
+          digitalWrite(servoPin8, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }  
+
+  //------------------------------------------ Value "J" ---------------------------------------------
+
+  if (val == 'J') {
+    (destination=615);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin9, HIGH);                 // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin9, LOW);                  // Turn the motor off
+          digitalWrite(servoPin8, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1156);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin10, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin13, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin10, LOW);                   // Turn the motor off
+          digitalWrite(servoPin13, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=532);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }  
+
+  //------------------------------------------ Value "K" ---------------------------------------------
+
+  if (val == 'K') {
+    (destination=775);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin13, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin13, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=906);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin11, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin7, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin11, LOW);                   // Turn the motor off
+          digitalWrite(servoPin7, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=582);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin6, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin6, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }  
+
+  // --------------------------------------Value "L"-------------------------------------------
+  if (val == 'L') {
+    (destination=1500);
+    {
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);   // Turn the motor on
+          digitalWrite(servoPin10, HIGH);   // Turn the motor on
+          delayMicroseconds(pulse);       // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);    // Turn the motor off
+          digitalWrite(servoPin10, LOW);    // Turn the motor off
+          lastPulse = millis();           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=885);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin13, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin13, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=637.5);
+    {                                                    //25'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin7, HIGH);                // Turn the motor on
+          digitalWrite(servoPin9, HIGH);                // Turn the motor on
+          digitalWrite(servoPin12, HIGH);                // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                // Turn the motor on
+          delayMicroseconds(pulse);                      // Length of the pulse sets the motor position
+          digitalWrite(servoPin7, LOW);                 // Turn the motor off
+          digitalWrite(servoPin9, LOW);                 // Turn the motor off
+          digitalWrite(servoPin12, LOW);                 // Turn the motor off
+          digitalWrite(servoPin8, LOW);                 // Turn the motor off
+          lastPulse = millis();                          // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+    (destination=582);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin6, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin11, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin6, LOW);                   // Turn the motor off
+          digitalWrite(servoPin11, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }
+
+
+  // --------------------------------Value "M"------------------------------------
+  if (val == 'M') {
+    (destination=1500);
+    {
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin12, HIGH);   // Turn the motor on
+          digitalWrite(servoPin7, HIGH);   // Turn the motor on
+          digitalWrite(servoPin10, HIGH);   // Turn the motor on
+          digitalWrite(servoPin9, HIGH);   // Turn the motor on
+          delayMicroseconds(pulse);       // Length of the pulse sets the motor position
+          digitalWrite(servoPin12, LOW);    // Turn the motor off
+          digitalWrite(servoPin7, LOW);    // Turn the motor off
+          digitalWrite(servoPin10, LOW);    // Turn the motor off
+          digitalWrite(servoPin9, LOW);    // Turn the motor off
+          lastPulse = millis();           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1116);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);                   // Turn the motor off
+          digitalWrite(servoPin8, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+  }
+
+  //------------------------------------------ Value "N" ---------------------------------------------
+
+  if (val == 'N') {
+    (destination=1085);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin10, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin10, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1315);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin12, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin7, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin12, LOW);                   // Turn the motor off
+          digitalWrite(servoPin7, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=682);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin9, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin5, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin8, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin9, LOW);                   // Turn the motor off
+          digitalWrite(servoPin5, LOW);                   // Turn the motor off
+          digitalWrite(servoPin8, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }  
+
+
+  //------------------------------------------ Value "O" ---------------------------------------------
+
+  if (val == 'O') {
+    (destination=1285);
+    {                                                      //70'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin11, HIGH);                 // Turn the motor on
+          delayMicroseconds(pulse);                       // Length of the pulse sets the motor position
+          digitalWrite(servoPin11, LOW);                  // Turn the motor off
+          lastPulse = millis();                           // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=1300);
+    {                                                      //112'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin5, HIGH);                  // Turn the motor on
+          digitalWrite(servoPin13, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin5, LOW);                   // Turn the motor off
+          digitalWrite(servoPin13, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+    (destination=680);
+    {                                                      //15'
+      if(counter<destination){
+        if (millis() - lastPulse >= refreshTime) {
+          digitalWrite(servoPin9, HIGH);                  // Turn the motor on
+          delayMicroseconds(pulse);                        // Length of the pulse sets the motor position
+          digitalWrite(servoPin9, LOW);                   // Turn the motor off
+          lastPulse = millis();                            // save the time of the last pulse
+        }
+        counter++;
+      }
+    }
+
+  }  
+
+} //VOID DTA
+//===================================================================================================================
+
+
