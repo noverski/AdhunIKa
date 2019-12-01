@@ -1,0 +1,282 @@
+//--------------------Finalised Script-------------------//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//BlobDetection by v3ga <http://processing.v3ga.net>
+//March 2007
+//Processing(Beta) v0.85
+//
+// Adding small boxes on the image process in order to 'close' blobs
+// Based on the amount of squares visible it sents signals to the arduino boards 
+// which would control the servo motors to move to a certain angle.
+//
+// ~~~~~~~~~~
+// software :
+// ~~~~~~~~~~
+// - Super Fast Blur v1.1 by Mario Klingemann <http://incubator.quasimondo.com>
+// - BlobDetection library
+// - Arduino Software
+//
+// ~~~~~~~~~~
+// hardware :
+// ~~~~~~~~~~
+// - V-Gear webcam                                      (Input)
+// - Arduino O/I Board                                  (Output)
+// - Cube-Shaped box controlled by Servo Motors         (Output)
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+import processing.video.*;
+import blobDetection.*;
+import processing.serial.*;
+
+
+Capture cam;
+BlobDetection theBlobDetection;
+PImage img;
+boolean newFrame=false;
+Serial port;                           //must be in global alway. 
+
+boolean DEBUG = true;
+
+
+
+int myCurrentBlobsAmount = 0;         //it refers to the number of squares it can find.
+// ==================================================
+// setup()
+// ==================================================
+void setup()
+{
+  // Size of applet
+  size(640, 480);
+  frameRate(30);                                                 //can use this this to control the reaction speed of the servo motors
+  // Print a list in case COM1 doesn't work out
+  println("Available serial ports:");
+  // List all the available serial ports:
+  println(Serial.list());
+  // Open whatever port is the one you’re using.
+  port = new Serial(this, Serial.list()[3], 9600);               //   /dev/tty.usbserial-A40014iO  - No.4 in the given serial port
+
+
+  // Capture
+  cam = new Capture(this, 160, 120, 15);
+  // BlobDetection
+  // img which will be sent to detection (a smaller copy of the cam frame);
+  img = new PImage(80,60); 
+  theBlobDetection = new BlobDetection(img.width, img.height);
+  theBlobDetection.setPosDiscrimination(true);
+  theBlobDetection.setThreshold(0.2f);                           // will detect bright areas whose luminosity > 0.2f
+
+}
+
+
+
+
+// ==================================================
+// captureEvent()
+// ==================================================
+void captureEvent(Capture cam)
+{
+  cam.read();
+  newFrame = true;
+}
+
+
+// ==================================================
+// draw()
+// ==================================================
+void draw()
+{
+  if (newFrame)
+  {
+    newFrame=false;
+    image(cam,0,0,width,height);
+    img.copy(cam, 0, 0, cam.width, cam.height, 
+    0, 0, img.width, img.height); 
+    theBlobDetection.computeBlobs(img.pixels);
+    drawBlobsAndEdges(true,true);
+  }
+}
+
+// ==================================================
+// drawBlobsAndEdges()
+// ==================================================
+void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges)
+{
+  noFill();
+  Blob b;
+  EdgeVertex eA,eB;
+  myCurrentBlobsAmount = theBlobDetection.getBlobNb();
+  if(DEBUG==true) {
+    for (int n=0 ; n<myCurrentBlobsAmount; n++)
+    {
+      b=theBlobDetection.getBlob(n);
+      if (b!=null)
+      {
+
+        // Blobs
+        if (drawBlobs)
+        {
+          strokeWeight(0);
+          stroke(0,0,0);
+          fill(255,255,255);		
+          rect(
+          b.xMin*width,b.yMin*height,
+          b.w = 10,b.h = 10                           //change the * to = to create a fixed shape
+          );
+        }
+      }
+    }
+  }
+    DTA();
+}
+
+// ==================================================
+// Data to Arduino
+// ==================================================
+void  DTA()
+{
+  
+  // less than 5
+  if(myCurrentBlobsAmount<5) {
+    println("0-5");
+    port.write('A');                            // All 3 servo Motors are reset (Destination 500)
+    if(DEBUG==true) { 
+      fill(255,255,0);
+      ellipse(30,20,55,55);
+    }
+  }
+
+  //between 5 n 8
+  if(myCurrentBlobsAmount>5 && myCurrentBlobsAmount<8 ) {
+    println("5-20");
+    port.write('B');                          // Center servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(255,255,255);
+      ellipse(60,20,55,55);
+    }
+  }     
+
+  //between 9 n 12
+  if(myCurrentBlobsAmount>9 && myCurrentBlobsAmount<12 ) {
+    println("9-12");
+    port.write('C');                          // Top servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(0,255,0);
+      ellipse(90,20,55,55);
+    }
+  }  
+
+  //between 13 n 16
+  if(myCurrentBlobsAmount>13 && myCurrentBlobsAmount<16 ) {
+     println("13-16");
+     port.write('D');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(0,255,255);
+      ellipse(120,20,55,55);
+    }
+  }  
+
+  //between 17 n 20
+  if(myCurrentBlobsAmount>17 && myCurrentBlobsAmount<20 ) {
+     println("17-20");
+     port.write('D');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(0,0,255);
+      ellipse(150,20,55,55);
+    }
+  }  
+
+
+   //between 21 n 23
+  if(myCurrentBlobsAmount>21 && myCurrentBlobsAmount<23 ) {
+     println("21-23");
+     port.write('E');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(150,255,0);
+      ellipse(180,20,55,55);
+    }
+  }  
+
+  //between 24 n 26
+  if(myCurrentBlobsAmount>24 && myCurrentBlobsAmount<26 ) {
+     println("24-26");
+     port.write('F');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(150,255,150);
+      ellipse(210,20,55,55);
+    }
+  }  
+
+  //between 27 n 29
+  if(myCurrentBlobsAmount>27 && myCurrentBlobsAmount<29 ) {
+     println("27-29");
+     port.write('G');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(150,150,150);
+      ellipse(240,20,55,55);
+    }
+  }  
+  
+
+  //between 30 n 32
+  if(myCurrentBlobsAmount>30 && myCurrentBlobsAmount<32 ) {
+     println("30-32");
+     port.write('H');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(200,255,200);
+      ellipse(270,20,55,55);
+    }
+  }  
+  //between 33 n 35
+  if(myCurrentBlobsAmount>33 && myCurrentBlobsAmount<35 ) {
+     println("33-35");
+     port.write('I');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(255,200,200);
+      ellipse(300,20,55,55);
+    }
+  }  
+
+  //between 36 n 38
+  if(myCurrentBlobsAmount>36 && myCurrentBlobsAmount<38 ) {
+     println("36-38");
+     port.write('J');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(0,255,0);
+      ellipse(330,20,55,55);
+    }
+  }  
+
+  //between 39 n 41
+  if(myCurrentBlobsAmount>39 && myCurrentBlobsAmount<41 ) {
+     println("39-41");
+     port.write('K');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(0,255,0);
+      ellipse(360,20,55,55);
+    }
+  }  
+
+  //between 42 n 44
+  if(myCurrentBlobsAmount>42 && myCurrentBlobsAmount<44 ) {
+     println("42-44");
+     port.write('L');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(0,255,0);
+      ellipse(390,20,55,55);
+    }
+  }  
+
+  //between 45 n 47
+  if(myCurrentBlobsAmount>45 && myCurrentBlobsAmount<47 ) {
+     println("45-47");
+     port.write('M');                          // Bottom Servo moves to a certain angle
+    if(DEBUG==true) { 
+      fill(0,255,0);
+      ellipse(420,20,55,55);
+    }
+  }  
+
+ 
+} 
+
+
